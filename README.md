@@ -19,7 +19,7 @@ Press **Tab** to accept a visible suggestion or **Escape** to dismiss it. Press 
 
 ## Download
 
-Download the newest `academic-inline-*.vsix` file from [GitHub Releases](https://github.com/HG-KaiBai/academic-inline/releases/latest). Do not download the repository's source ZIP unless you intend to build the extension yourself.
+Download the newest `academic-inline-*.vsix` file from [GitHub Releases](https://github.com/HG-KaiBai/Codex_inline_text/releases/latest). Do not download the repository's source ZIP unless you intend to build the extension yourself.
 
 ## Requirements
 
@@ -50,7 +50,7 @@ If Codex came with the Codex desktop app and already works in PowerShell, you ca
 
 ### 2. Install Academic Inline
 
-Download the VSIX from [the latest release](https://github.com/HG-KaiBai/academic-inline/releases/latest). In VS Code, open **Extensions**, select the `...` menu, choose **Install from VSIX...**, select the downloaded file, and reload VS Code.
+Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Codex_inline_text/releases/latest). In VS Code, open **Extensions**, select the `...` menu, choose **Install from VSIX...**, select the downloaded file, and reload VS Code.
 
 Alternatively, if the `code` command is on PATH:
 
@@ -83,7 +83,7 @@ npm install -g @openai/codex
 
 ### 2. Install Academic Inline
 
-Download the VSIX from [the latest release](https://github.com/HG-KaiBai/academic-inline/releases/latest). In VS Code, open **Extensions**, select the `...` menu, choose **Install from VSIX...**, select the downloaded file, and reload VS Code.
+Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Codex_inline_text/releases/latest). In VS Code, open **Extensions**, select the `...` menu, choose **Install from VSIX...**, select the downloaded file, and reload VS Code.
 
 For terminal installation, first run **Shell Command: Install 'code' command in PATH** from the VS Code command palette, then run:
 
