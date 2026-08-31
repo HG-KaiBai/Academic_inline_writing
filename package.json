@@ -5,13 +5,13 @@
   "version": "0.2.2",
   "publisher": "local",
   "license": "MIT",
-  "homepage": "https://github.com/HG-KaiBai/Codex_inline_text#readme",
+  "homepage": "https://github.com/HG-KaiBai/Academic_inline_writing#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HG-KaiBai/Codex_inline_text.git"
+    "url": "https://github.com/HG-KaiBai/Academic_inline_writing.git"
   },
   "bugs": {
-    "url": "https://github.com/HG-KaiBai/Codex_inline_text/issues"
+    "url": "https://github.com/HG-KaiBai/Academic_inline_writing/issues"
   },
   "engines": {
     "vscode": "^1.96.0"
