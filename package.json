@@ -1,0 +1,262 @@
+{
+  "name": "academic-inline",
+  "displayName": "Academic Inline",
+  "description": "Copilot-style academic writing completions powered by your local Codex CLI.",
+  "version": "0.2.2",
+  "publisher": "local",
+  "license": "MIT",
+  "homepage": "https://github.com/HG-KaiBai/academic-inline#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HG-KaiBai/academic-inline.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HG-KaiBai/academic-inline/issues"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "academic",
+    "writing",
+    "latex",
+    "overleaf",
+    "codex",
+    "inline completion"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:latex",
+    "onLanguage:markdown",
+    "onLanguage:plaintext",
+    "onLanguage:restructuredtext",
+    "onCommand:academicInline.triggerSuggestion",
+    "onCommand:academicInline.rewriteSelection",
+    "onCommand:academicInline.acceptRewrite",
+    "onCommand:academicInline.rejectRewrite",
+    "onCommand:academicInline.selectModel",
+    "onCommand:academicInline.selectReasoningEffort",
+    "onCommand:academicInline.toggleEnabled",
+    "onCommand:academicInline.checkCodex",
+    "onCommand:academicInline.showOutput"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "academicInline.triggerSuggestion",
+        "title": "Academic Inline: Trigger Suggestion",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "academicInline.selectModel",
+        "title": "Academic Inline: Select Model and Strength"
+      },
+      {
+        "command": "academicInline.selectReasoningEffort",
+        "title": "Academic Inline: Select Reasoning Strength"
+      },
+      {
+        "command": "academicInline.rewriteSelection",
+        "title": "Academic Inline: Rewrite Selected Paragraph"
+      },
+      {
+        "command": "academicInline.acceptRewrite",
+        "title": "Academic Inline: Accept Rewrite"
+      },
+      {
+        "command": "academicInline.rejectRewrite",
+        "title": "Academic Inline: Reject Rewrite"
+      },
+      {
+        "command": "academicInline.toggleEnabled",
+        "title": "Academic Inline: Enable/Disable"
+      },
+      {
+        "command": "academicInline.checkCodex",
+        "title": "Academic Inline: Check Codex CLI"
+      },
+      {
+        "command": "academicInline.showOutput",
+        "title": "Academic Inline: Show Logs"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "editor.action.inlineSuggest.commit",
+        "key": "tab",
+        "when": "inlineSuggestionVisible && editorTextFocus && !editorTabMovesFocus"
+      },
+      {
+        "command": "academicInline.triggerSuggestion",
+        "key": "alt+\\",
+        "mac": "alt+\\",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "academicInline.acceptRewrite",
+        "key": "tab",
+        "when": "academicInline.rewritePreviewActive && resourceScheme == academic-inline-preview && editorTextFocus"
+      },
+      {
+        "command": "academicInline.rejectRewrite",
+        "key": "escape",
+        "when": "academicInline.rewritePreviewActive && resourceScheme == academic-inline-preview && editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Academic Inline",
+      "properties": {
+        "academicInline.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable academic inline suggestions."
+        },
+        "academicInline.automaticSuggestions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Request suggestions automatically after typing pauses. Manual suggestions remain available with Alt+\\."
+        },
+        "academicInline.model": {
+          "type": "string",
+          "default": "",
+          "description": "Codex model ID. Leave empty to use the model configured by Codex. Use 'Academic Inline: Select Codex Model' to pick from the local catalog."
+        },
+        "academicInline.fallbackModels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "gpt-5.4-mini",
+            "gpt-5.4",
+            "gpt-5.5",
+            "gpt-5.3-codex"
+          ],
+          "description": "Model IDs shown if the Codex model catalog cannot be read. Custom model IDs can always be entered."
+        },
+        "academicInline.reasoningEffort": {
+          "type": "string",
+          "enum": [
+            "default",
+            "none",
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "low",
+          "description": "Reasoning effort passed to Codex. Low is recommended for responsive inline writing."
+        },
+        "academicInline.codexPath": {
+          "type": "string",
+          "default": "codex",
+          "description": "Path or command name for the Codex CLI executable."
+        },
+        "academicInline.allowedLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "latex",
+            "markdown",
+            "plaintext",
+            "restructuredtext"
+          ],
+          "description": "VS Code language IDs in which suggestions are allowed."
+        },
+        "academicInline.debounceMilliseconds": {
+          "type": "number",
+          "default": 350,
+          "minimum": 100,
+          "maximum": 2500,
+          "description": "Typing pause before an automatic request is sent."
+        },
+        "academicInline.minimumContextCharacters": {
+          "type": "number",
+          "default": 24,
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Minimum non-whitespace context in the current paragraph before automatic suggestions run."
+        },
+        "academicInline.maxPrefixCharacters": {
+          "type": "number",
+          "default": 6000,
+          "minimum": 500,
+          "maximum": 30000,
+          "description": "Maximum characters before the cursor sent to Codex."
+        },
+        "academicInline.maxSuffixCharacters": {
+          "type": "number",
+          "default": 1500,
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Maximum characters after the cursor sent to Codex."
+        },
+        "academicInline.maximumWords": {
+          "type": "number",
+          "default": 50,
+          "minimum": 5,
+          "maximum": 50,
+          "description": "Maximum length of automatic grey inline completions, capped at 50 words. Manually invoked Alt+\\ completions and selected-text rewrites are not limited."
+        },
+        "academicInline.englishVariant": {
+          "type": "string",
+          "enum": [
+            "preserve",
+            "British",
+            "American"
+          ],
+          "default": "preserve",
+          "description": "Preferred English spelling convention. Preserve follows the surrounding text."
+        },
+        "academicInline.disableInLatexComments": {
+          "type": "boolean",
+          "default": true,
+          "description": "Do not generate automatic completions after an unescaped % on a LaTeX line."
+        },
+        "academicInline.customInstructions": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Optional writing guidance, such as a discipline, register, or preferred terminology. Do not put secrets here."
+        },
+        "academicInline.allowWorkspaceRead": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow the Codex process to read the local document or workspace folder. Disabled by default; only the bounded prompt context is available."
+        },
+        "academicInline.workingDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "Optional local working directory used only when workspace reading is enabled. Leave empty to use the document or workspace folder."
+        },
+        "academicInline.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the active model and enabled state in the status bar."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/extension.js && node --check src/codexClient.js && node --check src/context.js && node --check src/prompt.js",
+    "package": "vsce package --allow-missing-repository --no-dependencies"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@vscode/vsce": "^3.9.2"
+  }
+}
