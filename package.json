@@ -3,7 +3,7 @@
   "displayName": "Academic Inline",
   "description": "Copilot-style academic writing completions powered by your local Codex CLI.",
   "version": "0.2.3",
-  "publisher": "local",
+  "publisher": "YixingZhao",
   "license": "MIT",
   "homepage": "https://github.com/HG-KaiBai/Academic_inline_writing#readme",
   "repository": {
