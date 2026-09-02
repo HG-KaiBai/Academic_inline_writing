@@ -2,7 +2,7 @@
 
 Academic Inline is a VS Code extension for Copilot-style academic writing assistance. It reads a bounded window around the cursor, asks your locally authenticated Codex CLI for a short continuation, and displays the result as VS Code's native grey inline text.
 
-Press **Tab** to accept a visible suggestion or **Escape** to dismiss it. Press **Alt+\\** with no selection to request one manually. Select a paragraph and press **Alt+\\** to request an instructed rewrite with a diff and accept/reject choice.
+Press **Tab** to accept a visible suggestion or **Escape** to dismiss it. Press **Alt+\\** with no selection to request one manually. Select any text and press **Alt+\\** to request an instructed rewrite with a diff and accept/reject choice.
 
 ## Features
 
@@ -55,7 +55,7 @@ Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Academi
 Alternatively, if the `code` command is on PATH:
 
 ```powershell
-code --install-extension "$HOME\Downloads\academic-inline-0.2.2.vsix" --force
+code --install-extension "$HOME\Downloads\academic-inline-0.2.3.vsix" --force
 ```
 
 ## macOS installation
@@ -88,7 +88,7 @@ Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Academi
 For terminal installation, first run **Shell Command: Install 'code' command in PATH** from the VS Code command palette, then run:
 
 ```bash
-code --install-extension "$HOME/Downloads/academic-inline-0.2.2.vsix" --force
+code --install-extension "$HOME/Downloads/academic-inline-0.2.3.vsix" --force
 ```
 
 ## Verify the installation
@@ -102,7 +102,7 @@ Open a `.tex`, Markdown, text, or reStructuredText document and continue writing
 - **Tab** accepts the visible suggestion using VS Code's standard inline-suggestion binding.
 - **Escape** dismisses it.
 - **Alt+\\** with no selection explicitly triggers a grey suggestion, including in places with less than the automatic minimum context.
-- Select a paragraph and press **Alt+\\**, then enter a short instruction such as `make this concise and clarify the causal argument`. In the native diff, press **Tab** to accept or **Escape** to reject. A persistent status-bar reminder stays visible until you decide. The source document is unchanged until you accept.
+- Select one or more sentences and press **Alt+\\**, then enter a short instruction such as `make the notation consistent with the preceding text`. Codex can read the configured unselected context before and after the selection, but the proposed replacement and accepted edit are limited to the selected text. In the native diff, press **Tab** to accept or **Escape** to reject. A persistent status-bar reminder stays visible until you decide. The source document is unchanged until you accept.
 - Click the `Academic: ... · ...` status-bar item to select both a model and reasoning strength.
 - Use `Academic Inline: Enable/Disable` to toggle the extension for the current workspace.
 
@@ -129,8 +129,8 @@ Run `Academic Inline: Select Model and Strength` or click the status-bar item. T
 | `academicInline.model` | empty | Uses the Codex-configured model. |
 | `academicInline.reasoningEffort` | `low` | Controls latency and reasoning depth. |
 | `academicInline.debounceMilliseconds` | `350` | Delay after typing before an automatic request. |
-| `academicInline.maxPrefixCharacters` | `6000` | Context before the cursor. |
-| `academicInline.maxSuffixCharacters` | `1500` | Context after the cursor. |
+| `academicInline.maxPrefixCharacters` | `6000` | Read-only context before the cursor or selection. |
+| `academicInline.maxSuffixCharacters` | `1500` | Read-only context after the cursor or selection. |
 | `academicInline.maximumWords` | `50` | Maximum automatic inline length; Alt+\\ requests are unrestricted. |
 | `academicInline.englishVariant` | `preserve` | Preserves, British, or American spelling. |
 | `academicInline.customInstructions` | empty | Adds discipline or style guidance. |

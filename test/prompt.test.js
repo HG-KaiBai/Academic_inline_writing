@@ -66,6 +66,8 @@ test('builds a selection rewrite prompt with academic and LaTeX safeguards', () 
   });
 
   assert.match(prompt, /complete replacement text and nothing else/);
+  assert.match(prompt, /notation.*preceding unselected text/);
+  assert.match(prompt, /read-only context/);
   assert.match(prompt, /Do not invent or remove evidence/);
   assert.match(prompt, /American English/);
   assert.match(prompt, /Make it more precise and concise/);

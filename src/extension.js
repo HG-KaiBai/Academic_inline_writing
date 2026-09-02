@@ -6,6 +6,7 @@ const { randomUUID } = require('node:crypto');
 const vscode = require('vscode');
 const { CodexCliClient, CodexCliError } = require('./codexClient');
 const {
+  boundedSelectionContext,
   cleanCompletion,
   cleanRewrite,
   hasEnoughContext,
@@ -34,21 +35,6 @@ function boundedContext(document, position, maxPrefixCharacters, maxSuffixCharac
   return {
     beforeCursor: document.getText(new vscode.Range(prefixStart, position)),
     afterCursor: document.getText(new vscode.Range(position, suffixEnd))
-  };
-}
-
-function boundedSelectionContext(document, range, maximumCharacters = 1200) {
-  const startOffset = document.offsetAt(range.start);
-  const endOffset = document.offsetAt(range.end);
-  return {
-    beforeSelection: document.getText(new vscode.Range(
-      document.positionAt(Math.max(0, startOffset - maximumCharacters)),
-      range.start
-    )),
-    afterSelection: document.getText(new vscode.Range(
-      range.end,
-      document.positionAt(Math.min(document.getText().length, endOffset + maximumCharacters))
-    ))
   };
 }
 
@@ -486,7 +472,7 @@ class RewriteDecisionController {
 async function rewriteSelection(client, previewProvider, decisionController, outputChannel) {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.selection.isEmpty) {
-    vscode.window.showInformationMessage('Select a paragraph first, then press Alt+\\.');
+    vscode.window.showInformationMessage('Select text first, then press Alt+\\.');
     return;
   }
   const document = editor.document;
@@ -508,8 +494,8 @@ async function rewriteSelection(client, previewProvider, decisionController, out
   const documentVersion = document.version;
   const instruction = await vscode.window.showInputBox({
     title: 'Academic Inline: Rewrite selection',
-    prompt: 'Describe how the selected paragraph should be rewritten',
-    placeHolder: 'For example: make it more concise and clarify the causal argument',
+    prompt: 'Describe how the selected text should be rewritten',
+    placeHolder: 'For example: make its notation consistent with the preceding text',
     ignoreFocusOut: true,
     validateInput: (value) => value.trim() ? undefined : 'Enter a rewrite request.'
   });
@@ -517,7 +503,13 @@ async function rewriteSelection(client, previewProvider, decisionController, out
     return;
   }
 
-  const surrounding = boundedSelectionContext(document, range);
+  const surrounding = boundedSelectionContext(
+    document.getText(),
+    document.offsetAt(range.start),
+    document.offsetAt(range.end),
+    configuration.get('maxPrefixCharacters', 6000),
+    configuration.get('maxSuffixCharacters', 1500)
+  );
   const prompt = buildRewritePrompt({
     selectedText: originalText,
     ...surrounding,
@@ -668,7 +660,7 @@ function activate(context) {
     vscode.window.onDidChangeActiveTextEditor(() => updateStatusBar(statusBar))
   );
 
-  outputChannel.appendLine(`[info] Academic Inline 0.2.2 activated on ${os.platform()}.`);
+  outputChannel.appendLine(`[info] Academic Inline 0.2.3 activated on ${os.platform()}.`);
   updateStatusBar(statusBar);
 }
 

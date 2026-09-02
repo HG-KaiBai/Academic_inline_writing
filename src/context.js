@@ -9,6 +9,22 @@ function hasEnoughContext(prefix, minimumCharacters) {
   return currentParagraphLength(prefix) >= minimumCharacters;
 }
 
+function boundedSelectionContext(
+  documentText,
+  selectionStart,
+  selectionEnd,
+  maximumPrefixCharacters,
+  maximumSuffixCharacters
+) {
+  const prefixStart = Math.max(0, selectionStart - maximumPrefixCharacters);
+  const suffixEnd = Math.min(documentText.length, selectionEnd + maximumSuffixCharacters);
+
+  return {
+    beforeSelection: documentText.slice(prefixStart, selectionStart),
+    afterSelection: documentText.slice(selectionEnd, suffixEnd)
+  };
+}
+
 function isInLatexComment(linePrefix) {
   for (let index = 0; index < linePrefix.length; index += 1) {
     if (linePrefix[index] !== '%') {
@@ -136,6 +152,7 @@ function cleanRewrite(rawRewrite) {
 }
 
 module.exports = {
+  boundedSelectionContext,
   cleanCompletion,
   cleanRewrite,
   currentParagraphLength,

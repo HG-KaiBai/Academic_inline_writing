@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- Let selected-text rewrites use the configured preceding and following context windows while limiting accepted edits to the selected range.
+- Clarified that Alt+\\ can rewrite any selected text, including individual sentences.
+
 ## 0.2.2
 
 - Replaced the temporary rewrite notification with persistent keyboard controls in the diff view.

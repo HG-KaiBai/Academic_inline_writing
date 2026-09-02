@@ -3,6 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
+  boundedSelectionContext,
   cleanCompletion,
   cleanRewrite,
   currentParagraphLength,
@@ -12,6 +13,21 @@ const {
   truncateAtWord,
   truncateAtWords
 } = require('../src/context');
+
+test('provides bounded unselected context around a rewrite selection', () => {
+  const text = 'Notation: use x_t for the state. Rewrite this sentence. Later text.';
+  const selectedText = 'Rewrite this sentence.';
+  const selectionStart = text.indexOf(selectedText);
+  const selectionEnd = selectionStart + selectedText.length;
+
+  assert.deepEqual(
+    boundedSelectionContext(text, selectionStart, selectionEnd, 20, 6),
+    {
+      beforeSelection: ' x_t for the state. ',
+      afterSelection: ' Later'
+    }
+  );
+});
 
 test('counts only the current paragraph for automatic triggering', () => {
   const prefix = 'A long previous paragraph.\n  \nShort text';

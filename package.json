@@ -2,7 +2,7 @@
   "name": "academic-inline",
   "displayName": "Academic Inline",
   "description": "Copilot-style academic writing completions powered by your local Codex CLI.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "local",
   "license": "MIT",
   "homepage": "https://github.com/HG-KaiBai/Academic_inline_writing#readme",
@@ -62,7 +62,7 @@
       },
       {
         "command": "academicInline.rewriteSelection",
-        "title": "Academic Inline: Rewrite Selected Paragraph"
+        "title": "Academic Inline: Rewrite Selected Text"
       },
       {
         "command": "academicInline.acceptRewrite",
@@ -191,14 +191,14 @@
           "default": 6000,
           "minimum": 500,
           "maximum": 30000,
-          "description": "Maximum characters before the cursor sent to Codex."
+          "description": "Maximum unselected characters before the cursor or selection sent to Codex as read-only context."
         },
         "academicInline.maxSuffixCharacters": {
           "type": "number",
           "default": 1500,
           "minimum": 0,
           "maximum": 10000,
-          "description": "Maximum characters after the cursor sent to Codex."
+          "description": "Maximum unselected characters after the cursor or selection sent to Codex as read-only context."
         },
         "academicInline.maximumWords": {
           "type": "number",
