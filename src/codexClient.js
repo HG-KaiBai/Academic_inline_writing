@@ -4,6 +4,7 @@ const { spawn } = require('node:child_process');
 const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
+const { version } = require('../package.json');
 
 const MAX_PROCESS_OUTPUT = 2 * 1024 * 1024;
 const DEFAULT_PROCESS_TIMEOUT_MILLISECONDS = 10000;
@@ -42,32 +43,37 @@ function buildExecArgs({ model, reasoningEffort, outputPath }) {
 }
 
 function parseModelCatalog(raw) {
-  const start = raw.indexOf('{');
-  const end = raw.lastIndexOf('}');
-  if (start < 0 || end < start) {
-    throw new CodexCliError('Codex returned an unreadable model catalog.');
+  let parsed = raw;
+  if (typeof raw === 'string') {
+    const start = raw.indexOf('{');
+    const end = raw.lastIndexOf('}');
+    if (start < 0 || end < start) {
+      throw new CodexCliError('Codex returned an unreadable model catalog.');
+    }
+    try {
+      parsed = JSON.parse(raw.slice(start, end + 1));
+    } catch (error) {
+      throw new CodexCliError('Codex returned invalid model catalog JSON.', error.message);
+    }
   }
 
-  let parsed;
-  try {
-    parsed = JSON.parse(raw.slice(start, end + 1));
-  } catch (error) {
-    throw new CodexCliError('Codex returned invalid model catalog JSON.', error.message);
-  }
-
-  if (!Array.isArray(parsed.models)) {
+  const models = parsed?.data ?? parsed?.models;
+  if (!Array.isArray(models)) {
     throw new CodexCliError('The Codex model catalog did not include a models list.');
   }
 
-  return parsed.models
-    .filter((model) => model && typeof model.slug === 'string' && model.visibility !== 'hide')
+  return models
+    .filter((model) => model && model.hidden !== true && model.visibility !== 'hide')
+    .filter((model) => typeof (model.model || model.slug || model.id) === 'string')
     .map((model) => ({
-      id: model.slug,
-      label: model.display_name || model.slug,
+      id: model.model || model.slug || model.id,
+      label: model.displayName || model.display_name || model.model || model.slug || model.id,
       description: model.description || '',
-      reasoningEfforts: Array.isArray(model.supported_reasoning_levels)
-        ? model.supported_reasoning_levels.map((level) => level.effort).filter(Boolean)
-        : []
+      reasoningEfforts: (Array.isArray(model.supportedReasoningEfforts)
+        ? model.supportedReasoningEfforts
+        : Array.isArray(model.supported_reasoning_levels) ? model.supported_reasoning_levels : [])
+        .map((level) => level?.reasoningEffort || level?.effort)
+        .filter((effort) => typeof effort === 'string' && effort.length > 0)
     }));
 }
 
@@ -213,7 +219,7 @@ class CodexAppServerConnection {
       clientInfo: {
         name: 'academic-inline-vscode',
         title: 'Academic Inline',
-        version: '0.2.3'
+        version
       },
       capabilities: {
         optOutNotificationMethods: [
@@ -497,10 +503,30 @@ class CodexCliClient {
   }
 
   async listModels({ cliPath, timeoutMilliseconds = 10000 }) {
-    const result = await runProcess(cliPath, ['debug', 'models', '--bundled'], {
-      timeoutMilliseconds
-    });
-    return parseModelCatalog(result.stdout);
+    const connection = this.getConnection(cliPath);
+    await connection.initialize(timeoutMilliseconds);
+    const models = new Map();
+    const cursors = new Set();
+    let cursor;
+    do {
+      const result = await connection.request('model/list', {
+        limit: 100,
+        includeHidden: false,
+        ...(cursor ? { cursor } : {})
+      }, timeoutMilliseconds);
+      for (const model of parseModelCatalog(result)) {
+        if (!models.has(model.id)) {
+          models.set(model.id, model);
+        }
+      }
+      cursor = result.nextCursor;
+      if (cursor && (typeof cursor !== 'string' || cursors.has(cursor))) {
+        throw new CodexCliError('Codex returned an invalid model catalog cursor.');
+      }
+      cursors.add(cursor);
+    } while (cursor);
+    this.log(`Found ${models.size} models from Codex app server (${cliPath}).`);
+    return [...models.values()];
   }
 
   async version({ cliPath, timeoutMilliseconds = 10000 }) {

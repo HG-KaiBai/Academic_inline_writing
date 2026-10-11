@@ -2,7 +2,7 @@
   "name": "academic-inline",
   "displayName": "Academic Inline",
   "description": "Copilot-style academic writing completions powered by your local Codex CLI.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "publisher": "YixingZhao",
   "license": "MIT",
   "homepage": "https://github.com/HG-KaiBai/Academic_inline_writing#readme",
@@ -124,7 +124,7 @@
         "academicInline.model": {
           "type": "string",
           "default": "",
-          "description": "Codex model ID. Leave empty to use the model configured by Codex. Use 'Academic Inline: Select Codex Model' to pick from the local catalog."
+          "description": "Codex model ID. Leave empty to use the model configured by Codex. Use 'Academic Inline: Select Model and Strength' to pick from the CLI's live catalog."
         },
         "academicInline.fallbackModels": {
           "type": "array",
@@ -132,6 +132,10 @@
             "type": "string"
           },
           "default": [
+            "gpt-6.1-sol",
+            "gpt-6-astra",
+            "gpt-6-sol",
+            "gpt-6-luna",
             "gpt-5.4-mini",
             "gpt-5.4",
             "gpt-5.5",
@@ -149,7 +153,8 @@
             "medium",
             "high",
             "xhigh",
-            "max"
+            "max",
+            "ultra"
           ],
           "default": "low",
           "description": "Reasoning effort passed to Codex. Low is recommended for responsive inline writing."

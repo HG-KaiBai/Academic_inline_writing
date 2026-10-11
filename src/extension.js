@@ -18,7 +18,7 @@ const CONFIGURATION_SECTION = 'academicInline';
 const MAX_INLINE_WORDS = 50;
 const PREVIEW_SCHEME = 'academic-inline-preview';
 const REWRITE_ACTIVE_CONTEXT = 'academicInline.rewritePreviewActive';
-const GENERIC_REASONING_EFFORTS = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'];
+const GENERIC_REASONING_EFFORTS = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'];
 let activeClient;
 
 function getConfiguration(document) {
@@ -252,7 +252,8 @@ function effortLabel(effort) {
     medium: 'Medium',
     high: 'High',
     xhigh: 'Extra high',
-    max: 'Maximum'
+    max: 'Maximum',
+    ultra: 'Ultra'
   }[effort] || effort;
 }
 
@@ -265,7 +266,8 @@ function effortDetail(effort) {
     medium: 'Balanced speed and reasoning depth',
     high: 'Deeper reasoning for difficult rewriting',
     xhigh: 'Very deep reasoning for complex requests',
-    max: 'Maximum available reasoning depth'
+    max: 'Maximum available reasoning depth',
+    ultra: 'Maximum reasoning with automatic task delegation'
   }[effort] || '';
 }
 

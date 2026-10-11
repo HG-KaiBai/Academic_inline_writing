@@ -9,7 +9,7 @@ Press **Tab** to accept a visible suggestion or **Escape** to dismiss it. Press 
 - Native grey inline completions in LaTeX, Markdown, plain text, and reStructuredText.
 - Automatic suggestions after a configurable typing pause.
 - Manual suggestions with **Alt+\\** or `Academic Inline: Trigger Suggestion`.
-- A combined model and reasoning-strength picker populated from the model catalog bundled with your installed Codex CLI.
+- A combined model and reasoning-strength picker populated from your Codex CLI's live model catalog.
 - Automatic grey inline completions capped at 50 words, without a generation deadline. Alt+\\ requests are unrestricted.
 - Instruction-driven paragraph rewriting with VS Code's native diff viewer and explicit accept/reject controls.
 - Evidence-aware academic prompting that preserves terminology and avoids invented citations, data, authors, results, and bibliography keys.
@@ -55,7 +55,7 @@ Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Academi
 Alternatively, if the `code` command is on PATH:
 
 ```powershell
-code --install-extension "$HOME\Downloads\academic-inline-0.2.3.vsix" --force
+code --install-extension "$HOME\Downloads\academic-inline-0.2.4.vsix" --force
 ```
 
 ## macOS installation
@@ -88,7 +88,7 @@ Download the VSIX from [the latest release](https://github.com/HG-KaiBai/Academi
 For terminal installation, first run **Shell Command: Install 'code' command in PATH** from the VS Code command palette, then run:
 
 ```bash
-code --install-extension "$HOME/Downloads/academic-inline-0.2.3.vsix" --force
+code --install-extension "$HOME/Downloads/academic-inline-0.2.4.vsix" --force
 ```
 
 ## Verify the installation
@@ -116,7 +116,9 @@ The text is still passed directly through the VS Code document API even when it 
 
 ## Model selection
 
-Run `Academic Inline: Select Model and Strength` or click the status-bar item. The first picker asks `codex debug models --bundled` for the models available in your installed CLI. Choose `Use Codex default` to inherit the model in your Codex configuration, or enter any custom model ID accepted by your installation. The second picker shows the strengths supported by that model. You can also run `Academic Inline: Select Reasoning Strength` independently.
+Run `Academic Inline: Select Model and Strength` or click the status-bar item. Each time it opens, the first picker requests `model/list` from the configured `codex app-server`, including every page of visible models. It uses the CLI's current catalog rather than the fixed catalog bundled at build time. Choose `Use Codex default` to inherit the model in your Codex configuration, or enter any custom model ID accepted by your installation. The second picker shows the strengths supported by that model, including Ultra when available. You can also run `Academic Inline: Select Reasoning Strength` independently. If discovery fails, the picker uses `academicInline.fallbackModels`.
+
+Model discovery follows the [official Codex app-server protocol](https://learn.chatgpt.com/docs/app-server#list-models-modellist). Availability depends on your CLI version, account, and provider configuration.
 
 `academicInline.reasoningEffort` defaults to `low` because inline completion is latency-sensitive. Medium, high, extra-high, and maximum settings can improve difficult work and are allowed to finish without a generation deadline.
 
@@ -166,6 +168,7 @@ Press **F5** in this folder to launch an Extension Development Host. Open a writ
 
 - No grey text: check `editor.inlineSuggest.enabled`, the document language ID, and `academicInline.enabled`.
 - `Codex CLI` error: run `Academic Inline: Check Codex CLI`, then inspect `Academic Inline: Show Logs`.
+- Missing recent models: verify the CLI used by `academicInline.codexPath`. If multiple installations exist, VS Code may find an older one first; set the full path to your current CLI and reopen the model picker. In PowerShell, `Get-Command codex -All` lists installations on PATH. Update the CLI if its own model list is also outdated.
 - Slow suggestions: choose a faster model or lower reasoning strength. Manual Alt+\\ and selected-text rewrites have no generation deadline, but you can cancel a rewrite from its progress notification.
 - No suggestion in a LaTeX comment: use **Alt+\\** manually or disable `academicInline.disableInLatexComments`.
 - Tab inserts indentation: a suggestion must be visible, and no other extension should override `editor.action.inlineSuggest.commit`.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4
+
+- Discover models through the configured Codex app-server's live `model/list` endpoint instead of the build-time bundled catalog.
+- Follow model-list pagination and preserve each model's supported reasoning efforts, including Ultra.
+- Add GPT-6 models to the fallback list and document how to select the current CLI when multiple installations exist.
+
 ## 0.2.3
 
 - Let selected-text rewrites use the configured preceding and following context windows while limiting accepted edits to the selected range.
